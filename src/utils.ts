@@ -3,7 +3,7 @@ import { marked } from 'marked'
 marked.use({
   walkTokens(token: any) {
     const { type, raw } = token
-    if (type === 'paragraph' && (raw.startsWith('.ve-') || raw.startsWith('.twp-'))) {
+    if (type === 'paragraph' && (raw.startsWith('.ez-'))) {
       token.type = 'code'
       token.lang = 'juncture'
     }
@@ -33,7 +33,7 @@ marked.use({
       if (language === 'juncture') {
         let lines = code.trim().split('\n')
         let headLine = lines[0]
-        let tag = headLine.match(/\.(ve|twp)-[^\W]+/)?.[0].slice(1)
+        let tag = headLine.match(/\.ez-[^\W]+/)?.[0].slice(1)
         let attrs = asAttrs(parseHeadline(headLine))
         let slot = lines.length > 1 ? marked.parse(lines.slice(1).map(l => l.replace(/^    /,'')).join('\n')) : ''
         let elemHtml = `<${tag} ${attrs}>\n${slot}</${tag}>`
@@ -53,7 +53,7 @@ function markedTextHandler(paraText: string) {
     segments.push(paraText.slice(start, match.index))
     let [all, text, attrStr] = match
     let attrs = parseAttrsStr(attrStr)
-    let tag = attrs.qid ? 've-entity-infobox' : 've-trigger'
+    let tag = attrs.qid ? 'ez-entity-infobox' : 'ez-trigger'
     segments.push(`<${tag} ${asAttrs(attrs)}>${text}</${tag}>`)
     start = (match.index || 0) + all.length + 1
   }
@@ -95,7 +95,7 @@ function imgHandler(paraText:string) {
   let attrs = parseAttrsStr(attrStr)
   if (attrs.iiif === 'true') {
     delete attrs.iiif
-    return `<ve-media src="${img.src}" ${asAttrs(attrs)}></ve-media>`
+    return `<ez-image src="${img.src}" ${asAttrs(attrs)}></ez-image>`
   } else {
     return `<p>${imgStr}</p>`
   }
@@ -152,7 +152,7 @@ export function md2html(markdown: string) {
 
 export async function getHtml() {
   
-  // console.log(window.location)
+  console.log(window.location)
   let isGhp = /\.github\.io$/.test(location.hostname) // GitHub Pages
   
   let path = location.pathname.split('/').filter(p => p)
@@ -171,12 +171,15 @@ export async function getHtml() {
   } else {
     resp = await fetch('/config.yaml')
     if (resp.ok) {
-      let config = (await resp.text()).split('\n').map(l => l.split(':')).reduce((acc:any, [k, v]) => {
-        acc[k.trim()] = v.trim()
-        return acc
-      }, {})
-      owner = config.owner
-      repo = config.repo
+      let rawText = await resp.text()
+      if (rawText.indexOf('<!DOCTYPE html>') < 0) {
+        let config = (await resp.text()).split('\n').map(l => l.split(':')).reduce((acc:any, [k, v]) => {
+          acc[k.trim()] = v.trim()
+          return acc
+        }, {})
+        owner = config.owner
+        repo = config.repo
+      }
     }
   }
   if (path.length === 0) path = ['README.md']

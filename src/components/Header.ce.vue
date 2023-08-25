@@ -39,13 +39,13 @@ const props = defineProps({
         <div v-else></div>
         <h1 v-if="title" v-html="title" class="text-3xl text-white font-semibold"></h1>
         <div v-else></div>
-        <twp-menu v-if="menuItems.length">
+        <ez-menu v-if="menuItems.length">
           <ul>
             <li v-for="item in menuItems" :key="item.href">
               <a :href="item.href">{{ item.label }}</a>
             </li>
           </ul>
-        </twp-menu>
+        </ez-menu>
         <div v-else></div>
       </div>
   

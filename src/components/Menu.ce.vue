@@ -21,7 +21,7 @@ const props = defineProps({
 
 function getMenuItems() {
   
-  let slot = host.value.parentElement.querySelector('twp-menu')
+  let slot = host.value.parentElement.querySelector('ez-menu')
 
   function parseSlot() {
     menuItems.value = Array.from(slot.querySelectorAll('li'))

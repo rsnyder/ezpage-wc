@@ -7,33 +7,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tailwind WC</title>
     <style>
-      twp-header ul, twp-menu ul { display: none; }
+      ez-header ul, ez-menu ul { display: none; }
     </style>
   </head>
   <body>
   
-    <twp-header title="Tailwind Prototype" logo="public/Labs_logo_knockout.png" color="#990001">
+    <ez-header title="Tailwind Prototype" logo="public/Labs_logo_knockout.png" color="#990001">
       <ul>
         <li><a href="/">Home</a></li>
         <li><a href="/about">About</a></li>
       </ul>
-    </twp-header>
+    </ez-header>
 
     <main>
       
       <h2 class="font-bold text-2xl mt-4">Custom Menu Component</h2>
       <section class="bg-slate-100 rounded m-2 p-2">
-        <twp-menu>
+        <ez-menu>
           <ul>
             <li><a href="/">Home</a></li>
             <li><a href="/about">About</a></li>
           </ul>
-        </twp-menu>
+        </ez-menu>
       </section>
 
       <h2 class="font-bold text-2xl mt-4">Custom Accordion Component</h2>
       <section class="bg-slate-100 rounded m-2 p-2">
-        <twp-accordion></twp-accordion>
+        <ez-accordion></ez-accordion>
       </section>
 
       <h2 class="font-bold text-2xl mt-4">Custom Modal Component</h2>
@@ -45,7 +45,7 @@
           
       <h2 class="font-bold text-2xl mt-4">Entity Infobox and Viewer Triggers</h2>
       <section class="bg-slate-100 rounded m-2 p-2">
-        The <ve-entity-infobox qid="Q6960545">Vainakh tower architecture</ve-entity-infobox>, also called Nakh architecture, is a characteristic feature of <ve-trigger zoomto="12,34,56,78">ancient</ve-trigger> and medieval architecture of <ve-entity-infobox qid="Q5187">Chechnya</ve-entity-infobox> and <ve-entity-infobox qid="Q5219">Ingushetia</ve-entity-infobox>.
+        The <ez-entity-infobox qid="Q6960545">Vainakh tower architecture</ez-entity-infobox>, also called Nakh architecture, is a characteristic feature of <ez-trigger zoomto="12,34,56,78">ancient</ez-trigger> and medieval architecture of <ez-entity-infobox qid="Q5187">Chechnya</ez-entity-infobox> and <ez-entity-infobox qid="Q5219">Ingushetia</ez-entity-infobox>.
       </section>
 
       <h2 class="font-bold text-2xl mt-4">Default Preline Collapse Component</h2>
@@ -62,12 +62,12 @@
     
     <a href="https://github.com/JSTOR-Labs/tailwind-preline" target="_blank" class="text-blue-500 ml-4 mt-4">View on GitHub</a>
 
-    <twp-modal></twp-modal>
+    <ez-modal></ez-modal>
 
     <script type="module" src="/src/main.ts"></script>
     <script>
       function toggleModal() {
-        let modal = document.querySelector('twp-modal')
+        let modal = document.querySelector('ez-modal')
         let isOpen = modal.getAttribute('open') !== null
         if (isOpen) modal.removeAttribute('open')
         else modal.setAttribute('open', '')
