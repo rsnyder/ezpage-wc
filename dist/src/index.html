@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>    
+    <base href="/">
+    <meta charset="UTF-8">
+    <link rel="icon" href="/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tailwind WC</title>
+    <style>
+      twp-header ul, twp-menu ul { display: none; }
+    </style>
+    <script type="module" crossorigin src="/js/index.js"></script>
+  </head>
+  <body>
+  
+    <twp-header title="Tailwind Prototype" logo="public/Labs_logo_knockout.png" color="#990001">
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </twp-header>
+
+    <main>
+      
+      <h2 class="font-bold text-2xl mt-4">Custom Menu Component</h2>
+      <section class="bg-slate-100 rounded m-2 p-2">
+        <twp-menu>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/about">About</a></li>
+          </ul>
+        </twp-menu>
+      </section>
+
+      <h2 class="font-bold text-2xl mt-4">Custom Accordion Component</h2>
+      <section class="bg-slate-100 rounded m-2 p-2">
+        <twp-accordion></twp-accordion>
+      </section>
+
+      <h2 class="font-bold text-2xl mt-4">Custom Modal Component</h2>
+      <section class="bg-slate-100 rounded m-2 p-2">
+        <button class="bg-blue-500 text-white font-bold py-2 px-4 rounded" onclick="toggleModal()">
+          Show Modal
+        </button>
+      </section>
+          
+      <h2 class="font-bold text-2xl mt-4">Entity Infobox and Viewer Triggers</h2>
+      <section class="bg-slate-100 rounded m-2 p-2">
+        The <ve-entity-infobox qid="Q6960545">Vainakh tower architecture</ve-entity-infobox>, also called Nakh architecture, is a characteristic feature of <ve-trigger zoomto="12,34,56,78">ancient</ve-trigger> and medieval architecture of <ve-entity-infobox qid="Q5187">Chechnya</ve-entity-infobox> and <ve-entity-infobox qid="Q5219">Ingushetia</ve-entity-infobox>.
+      </section>
+
+      <h2 class="font-bold text-2xl mt-4">Default Preline Collapse Component</h2>
+      <section class="bg-slate-100 rounded m-2 p-2">
+        <button type="button" class="hs-collapse-toggle bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4" id="hs-unstyled-collapse" data-hs-collapse="#hs-unstyled-collapse-heading">
+          Preline Collapse
+        </button>
+        <div id="hs-unstyled-collapse-heading" class="hs-collapse hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="hs-unstyled-collapse">
+          This is a collapse body. It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions.
+        </div>
+      </section>
+
+    </main>
+    
+    <a href="https://github.com/JSTOR-Labs/tailwind-preline" target="_blank" class="text-blue-500 ml-4 mt-4">View on GitHub</a>
+
+    <twp-modal></twp-modal>
+
+    
+    <script>
+      function toggleModal() {
+        let modal = document.querySelector('twp-modal')
+        let isOpen = modal.getAttribute('open') !== null
+        if (isOpen) modal.removeAttribute('open')
+        else modal.setAttribute('open', '')
+      }
+    </script>
+  </body>
+</html>
