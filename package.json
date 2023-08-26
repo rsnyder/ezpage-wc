@@ -6,12 +6,13 @@
     "dev": "vite",
     "build": "tailwindcss -i ./src/input.css -o ./src/tailwind.css && run-p type-check build-only",
     "preview": "vite preview",
-    "build-only": "vite build",
+    "build-only": "vite build --base=/ezpage-wc/",
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
-    "tailwind": "tailwindcss -i ./src/input.css -o ./src/tailwind.css"
+    "tailwind": "tailwindcss -i ./src/input.css -o ./src/tailwind.css --watch"
   },
   "dependencies": {
     "marked": "^7.0.4",
+    "openseadragon": "^4.1.0",
     "preline": "^1.9.0",
     "ts-md5": "^1.3.1",
     "vue": "^3.3.4"
@@ -19,6 +20,7 @@
   "devDependencies": {
     "@tsconfig/node18": "^18.2.0",
     "@types/node": "^18.17.0",
+    "@types/openseadragon": "^3.0.6",
     "@vitejs/plugin-vue": "^4.2.3",
     "@vue/tsconfig": "^0.4.0",
     "autoprefixer": "^10.4.15",

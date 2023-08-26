@@ -1,4 +1,4 @@
-// import './tailwind.css'
+import './tailwind.css'
 import { defineCustomElement } from 'vue'
 import ('preline')
 

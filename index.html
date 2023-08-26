@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <base href="/ezpage/">
+  <head>    
+    <base href="/">
     <meta charset="UTF-8">
     <link rel="icon" href="/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tailwind WC</title>
-    <link rel="stylesheet" href="dist/css/index.css">
+    <title>EZPage</title>
+    <style>
+      ez-header ul, ez-menu ul { display: none; }
+    </style>
   </head>
   <body>
-    
-    <ez-header title="Tailwind Prototype" logo="public/Labs_logo_knockout.png" color="#990001">
+  
+    <ez-header title="EZPage" logo="public/Labs_logo_knockout.png" color="#990001">
       <ul>
         <li><a href="/">Home</a></li>
         <li><a href="/about">About</a></li>
@@ -18,7 +20,7 @@
     </ez-header>
 
     <main>
-    
+      
       <h2 class="font-bold text-2xl mt-4">Custom Menu Component</h2>
       <section class="bg-slate-100 rounded m-2 p-2">
         <ez-menu>
@@ -40,6 +42,11 @@
           Show Modal
         </button>
       </section>
+          
+      <h2 class="font-bold text-2xl mt-4">Entity Infobox and Viewer Triggers</h2>
+      <section class="bg-slate-100 rounded m-2 p-2">
+        The <ez-entity-infobox qid="Q6960545">Vainakh tower architecture</ez-entity-infobox>, also called Nakh architecture, is a characteristic feature of <ez-trigger zoomto="12,34,56,78">ancient</ez-trigger> and medieval architecture of <ez-entity-infobox qid="Q5187">Chechnya</ez-entity-infobox> and <ez-entity-infobox qid="Q5219">Ingushetia</ez-entity-infobox>.
+      </section>
 
       <h2 class="font-bold text-2xl mt-4">Default Preline Collapse Component</h2>
       <section class="bg-slate-100 rounded m-2 p-2">
@@ -51,11 +58,21 @@
         </div>
       </section>
 
+      <h2 class="font-bold text-2xl mt-4">Image Viewer</h2>
+      <section class="flow-root bg-slate-100 rounded m-2 p-2">
+        <ez-image 
+          src="https://upload.wikimedia.org/wikipedia/commons/4/40/Sunflower_sky_backdrop.jpg"
+          fit="contain"
+        ></ez-image>
+      </section>
+
     </main>
+    
+    <a href="https://rsnyder.github.io/ezpage-wc" target="_blank" class="text-blue-500 ml-4 mt-4">View on GitHub</a>
 
     <ez-modal></ez-modal>
 
-    <script type="module" src="dist/js/index.js"></script>
+    <script type="module" src="/src/main.ts"></script>
     <script>
       function toggleModal() {
         let modal = document.querySelector('ez-modal')
