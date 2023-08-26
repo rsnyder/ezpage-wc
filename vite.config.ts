@@ -28,7 +28,7 @@ export default defineConfig(({mode})=> {
     build: {
       rollupOptions: {
         input: {
-          index: './src/index.html',
+          index: './index.html',
         },
         output: {
           dir: 'dist',

@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>    
-    <base href="/">
     <meta charset="UTF-8">
     <link rel="icon" href="/ezpage-wc/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tailwind WC</title>
+    <title>EZPage</title>
     <style>
       ez-header ul, ez-menu ul { display: none; }
     </style>
@@ -14,7 +13,7 @@
   </head>
   <body>
   
-    <ez-header title="Tailwind Prototype" logo="public/Labs_logo_knockout.png" color="#990001">
+    <ez-header title="EZPage" logo="public/Labs_logo_knockout.png" color="#990001">
       <ul>
         <li><a href="/">Home</a></li>
         <li><a href="/about">About</a></li>
@@ -60,9 +59,17 @@
         </div>
       </section>
 
+      <h2 class="font-bold text-2xl mt-4">Image Viewer</h2>
+      <section class="flow-root bg-slate-100 rounded m-2 p-2">
+        <ez-image 
+          src="https://upload.wikimedia.org/wikipedia/commons/4/40/Sunflower_sky_backdrop.jpg"
+          fit="contain"
+        ></ez-image>
+      </section>
+
     </main>
     
-    <a href="https://github.com/JSTOR-Labs/tailwind-preline" target="_blank" class="text-blue-500 ml-4 mt-4">View on GitHub</a>
+    <a href="https://rsnyder.github.io/ezpage-wc" target="_blank" class="text-blue-500 ml-4 mt-4">View on GitHub</a>
 
     <ez-modal></ez-modal>
 
