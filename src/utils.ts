@@ -94,6 +94,7 @@ function imgHandler(paraText:string) {
   let img:any = new DOMParser().parseFromString(imgStr, 'text/html').children[0].children[1].children[0]
   let attrs = parseAttrsStr(attrStr)
   if (!attrs.full && !attrs.right) attrs.left = 'true'
+  console.log(img.src, attrs)
   return `<ez-image src="${img.src}" ${asAttrs(attrs)}></ez-image>`
 }
 
