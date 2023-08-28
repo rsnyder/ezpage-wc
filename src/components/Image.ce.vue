@@ -58,9 +58,11 @@
   const src = ref()
   watch(src, () => { getTileSource(src.value) })
   function setSrc(_src: string) {
-    src.value = /^\w+:/.test(_src) 
-      ? `https://iiif.juncture-digital.org/${_src.replace(/ /g, '_')}/manifest.json` 
-      : _src
+    src.value = /^http/.test(_src) 
+      ? _src
+      : /^\w+:/.test(_src)
+        ? `https://iiif.juncture-digital.org/${_src.replace(/ /g, '_')}/manifest.json` 
+        : _src
   }
 
   const manifest = ref()
