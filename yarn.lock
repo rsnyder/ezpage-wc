@@ -220,7 +220,7 @@
   "resolved" "https://registry.npmjs.org/@vue/shared/-/shared-3.3.4.tgz"
   "version" "3.3.4"
 
-"@vue/tsconfig@^0.4.0":
+"@vue/tsconfig@0.4.0":
   "integrity" "sha512-CPuIReonid9+zOG/CGTT05FXrPYATEqoDGNrEaqS4hwcw5BUNM2FguC0mOwJD4Jr16UpRVl9N0pY3P+srIbqmg=="
   "resolved" "https://registry.npmjs.org/@vue/tsconfig/-/tsconfig-0.4.0.tgz"
   "version" "0.4.0"
@@ -1085,10 +1085,10 @@
   dependencies:
     "wrappy" "1"
 
-"openseadragon@^4.1.0":
-  "integrity" "sha512-XMMzf5apmshvIvxvqMwiW9dJ07dol4zudvV1oFnoZuIpSZP3c3tlFjGbyOKHGhb1k4jmHQ7b7koG9vCHdKvC/A=="
-  "resolved" "https://registry.npmjs.org/openseadragon/-/openseadragon-4.1.0.tgz"
-  "version" "4.1.0"
+"openseadragon@^4.0.0":
+  "integrity" "sha512-HsjSgqiiPwLkW5576GxDJ7Rax96iLUET8fnTsJvu7uYYkd+qzen3bflxHyph0OVVgZBKP9SpGH1nPdU4Mz0Z2A=="
+  "resolved" "https://registry.npmjs.org/openseadragon/-/openseadragon-4.0.0.tgz"
+  "version" "4.0.0"
 
 "parse-json@^4.0.0":
   "integrity" "sha512-aOIos8bujGN93/8Ox/jPLh7RwVnPEysynVFE+fQZyg6jKELEHwzgKdLRFHUgXJL6kylijVSBC4BvN9OmsB48Rw=="
