@@ -30,10 +30,11 @@ function init() {
 // @ts-ignore
 console.log(`ezpage-wc: version=${process.env.version}`)
 
-import { getHtml, md2html } from './utils'
-export { getHtml, md2html }
+import { getHtml, md2html, setMeta } from './utils'
+export { getHtml, md2html, setMeta }
 let window = (globalThis as any).window
 window.md2html = md2html
 window.getHtml = getHtml
+window.setMeta = setMeta
 
 init()

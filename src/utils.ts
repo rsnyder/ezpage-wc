@@ -143,6 +143,40 @@ function parseAttrsStr(s: string): any {
   return obj
 }
 
+export function setMeta(html:string) {
+  let el = new DOMParser().parseFromString(html, 'text/html').children[0].children[1]
+  let meta = el.querySelector('ez-meta')
+  let header = el.querySelector('ez-header')
+  let firstHeading = el.querySelector('h1, h2',)
+  let firstParagraph = el.querySelector('p')
+
+  let title = meta?.getAttribute('title')
+    ? meta.getAttribute('title')
+    : header?.getAttribute('title')
+      ? header.getAttribute('title')
+      : firstHeading
+        ? firstHeading.textContent
+        : ''
+
+  let description =  meta?.getAttribute('description')
+    ? meta.getAttribute('description')
+    : firstParagraph
+      ? firstParagraph.textContent
+      : ''
+
+  let robots =  meta?.getAttribute('robots') || ''
+
+  if (title) document.title = title
+  if (description) document.querySelector('meta[name="description"]')?.setAttribute('content', description)
+  if (robots) {
+    let robotsMeta = document.createElement('meta')
+    robotsMeta.setAttribute('name', 'robots')
+    robotsMeta.setAttribute('content', robots)
+    document.head.appendChild(robotsMeta)
+  }
+  if (meta) meta.remove()
+}
+
 export function md2html(markdown: string) {
   return marked.parse(markdown)
 }

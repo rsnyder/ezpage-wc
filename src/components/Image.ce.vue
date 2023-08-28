@@ -299,10 +299,10 @@ function copyTextToClipboard(text: string) {
 <template>
 
 <div ref="root" 
-  class="rounded overflow-hidden shadow-lg ml-4"
+  class="rounded overflow-hidden shadow-lg"
   :class="{ 
-    'float-left': left ,
-    'float-right': right,
+    'float-left mr-4': left ,
+    'float-right ml-4': right,
     'w-1/2': left || right,
     'w-full': !left && !right,
   }"
