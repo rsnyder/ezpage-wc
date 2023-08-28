@@ -93,12 +93,7 @@ function imgHandler(paraText:string) {
   let [_, imgStr, attrStr] = match
   let img:any = new DOMParser().parseFromString(imgStr, 'text/html').children[0].children[1].children[0]
   let attrs = parseAttrsStr(attrStr)
-  if (attrs.iiif === 'true') {
-    delete attrs.iiif
-    return `<ez-image src="${img.src}" ${asAttrs(attrs)}></ez-image>`
-  } else {
-    return `<p>${imgStr}</p>`
-  }
+  return `<ez-image src="${img.src}" ${asAttrs(attrs)}></ez-image>`
 }
 
 function parseHeadline(s:string) {
