@@ -210,6 +210,23 @@ async function getFooterHtml() {
   if (resp.ok) return await resp.text()
 }
 
+let config: any
+export async function getConfig() {
+  if (config) return config
+  config = {}
+  let resp = await fetch('/_config.yml')
+  if (resp.ok) {
+    let rawText = await resp.text()
+    if (rawText.indexOf('<!DOCTYPE html>') < 0) {
+      config = rawText.split('\n').map(l => l.split(':')).reduce((acc:any, [k, v]) => {
+        acc[k.trim()] = v.trim()
+        return acc
+      }, {})
+    }
+  }
+  return config
+}
+
 export async function getHtml() {
   
   // console.log(window.location)
@@ -275,6 +292,17 @@ export async function getHtml() {
 }
 
 export async function convertToEzElements() {
+
+  let isGhp = isGHP()
+  let config = await getConfig()
+  console.log(`isGhp=${isGhp} origin=${location.origin}`, config)
+  
+  document.querySelectorAll('a').forEach(link => {
+    let href = new URL(link.href)
+    console.log(href)
+    if (isGhp && href.origin === location.origin && href.pathname.indexOf(`/${config.repo}/`) !== 0) link.href = `/${config.repo}${href.pathname}`
+  })
+
   Array.from(document.body.querySelectorAll('img'))
     .forEach((img: HTMLImageElement) => {
       let ezImage = document.createElement('ez-image')
