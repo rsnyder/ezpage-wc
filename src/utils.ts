@@ -286,7 +286,7 @@ export async function getHtml() {
 export async function convertToEzElements() {
 
   let isGhp = isGHP()
-  let config = await getConfig()
+  let config = (window as any).site
   console.log(`isGhp=${isGhp} origin=${location.origin}`, config)
   
   document.querySelectorAll('a').forEach(link => {
