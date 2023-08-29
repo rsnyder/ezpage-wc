@@ -298,8 +298,8 @@ export async function convertToEzElements() {
       let ezImage = document.createElement('ez-image')
       ezImage.setAttribute('src', img.src)
       ezImage.setAttribute('alt', img.alt)
-      ezImage.setAttribute('left', '')
-      img.parentNode?.replaceChild(ezImage, img)
+      ezImage.setAttribute('left', '');
+      (img.parentNode as HTMLElement).replaceWith(ezImage)
     })
 
   Array.from(document.body.querySelectorAll('p'))
@@ -312,6 +312,7 @@ export async function convertToEzElements() {
   let main = document.querySelector('main')
   let restructured = structureContent(main as HTMLElement)
   main?.replaceWith(restructured)
+  console.log('convertToEzElements')
 }
 
 function isNumeric(arg:any) { return !isNaN(arg) }

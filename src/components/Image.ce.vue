@@ -206,8 +206,10 @@
   }
 
   function addInteractionHandlers() {
+    console.log('addInteractionHandlers')
     let el = host.value.parentElement
     while (el.parentElement && el.tagName !== 'MAIN') el = el.parentElement;
+    console.log(el);
     (Array.from(el.querySelectorAll('a')) as HTMLAnchorElement[]).forEach(anchorElem => {
       let link = new URL(anchorElem.href)
       let qargs = new URLSearchParams(link.search)
