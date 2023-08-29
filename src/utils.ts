@@ -51,8 +51,10 @@ export function ezComponentHtml(el:HTMLElement) {
   let headLine = lines[0]
   let tag = headLine.match(/\.ez-[^\W]+/)?.[0].slice(1)
   let attrs = asAttrs(parseHeadline(headLine))
+  console.log(tag, attrs)
   let slot = lines.length > 1 ? marked.parse(lines.slice(1).map(l => l.replace(/^    /,'')).join('\n')) : ''
   let elemHtml = `<${tag} ${attrs}>\n${slot}</${tag}>`
+  console.log(elemHtml)
   return elemHtml
 }
 
@@ -115,6 +117,7 @@ function parseHeadline(s:string) {
     if (tokens.length > 0 && tokens[tokens.length-1].indexOf('=') === tokens[tokens.length-1].length-1) tokens[tokens.length-1] = `${tokens[tokens.length-1]}${token}`
     else tokens.push(token)
   })
+  console.log(tokens)
   return Object.fromEntries(tokens.slice(1).map(token => {
     if (token.indexOf('=') > 0) {
       let [key, value] = token.split('=')
