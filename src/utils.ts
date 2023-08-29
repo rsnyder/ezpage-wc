@@ -113,6 +113,7 @@ function imgHandler(paraText:string) {
 
 function parseHeadline(s:string) {
   let tokens:string[] = []
+  s = s.replace(/”/,'"').replace(/”/,'"').replace(/’/,"'")
   s?.match(/[^\s"]+|"([^"]*)"/gmi)?.forEach((token:string) => {
     if (tokens.length > 0 && tokens[tokens.length-1].indexOf('=') === tokens[tokens.length-1].length-1) tokens[tokens.length-1] = `${tokens[tokens.length-1]}${token}`
     else tokens.push(token)
