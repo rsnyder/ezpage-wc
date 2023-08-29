@@ -3,21 +3,23 @@ import { marked } from 'marked'
 marked.use({
   walkTokens(token: any) {
     const { type, raw } = token
+    /*
     if (type === 'paragraph' && (raw.startsWith('.ez-'))) {
       token.type = 'code'
       token.lang = 'juncture'
     }
+    */
   },
   renderer: {
     paragraph(paraText) {
 
-      if (paraText.startsWith('<img')) return imgHandler(paraText)
+      // if (paraText.startsWith('<img')) return imgHandler(paraText)
 
       let fnRefs = Array.from(paraText.matchAll(/(\[\^(\w+)\])[^:]/g))        // footnote references
       let markedText = Array.from(paraText.matchAll(/==(.+?)==\{([^\}]+)/g))  // marked text
       if (fnRefs.length || markedText.length) {
         paraText = footnoteReferencesHandler(paraText)
-        paraText = markedTextHandler(paraText)
+        // paraText = markedTextHandler(paraText)
         return `<p>${paraText}</p>`
       }
 
@@ -51,10 +53,8 @@ export function ezComponentHtml(el:HTMLElement) {
   let headLine = lines[0]
   let tag = headLine.match(/\.ez-[^\W]+/)?.[0].slice(1)
   let attrs = asAttrs(parseHeadline(headLine))
-  console.log(tag, attrs)
   let slot = lines.length > 1 ? marked.parse(lines.slice(1).map(l => l.replace(/^    /,'')).join('\n')) : ''
   let elemHtml = `<${tag} ${attrs}>\n${slot}</${tag}>`
-  console.log(elemHtml)
   return elemHtml
 }
 
@@ -107,18 +107,16 @@ function imgHandler(paraText:string) {
   let img:any = new DOMParser().parseFromString(imgStr, 'text/html').children[0].children[1].children[0]
   let attrs = parseAttrsStr(attrStr)
   if (!attrs.full && !attrs.right) attrs.left = 'true'
-  console.log(img.src, attrs)
   return `<ez-image src="${img.src}" ${asAttrs(attrs)}></ez-image>`
 }
 
 function parseHeadline(s:string) {
   let tokens:string[] = []
-  s = s.replace(/”/,'"').replace(/”/,'"').replace(/’/,"'")
+  s = s.replace(/”/g,'"').replace(/”/g,'"').replace(/’/g,"'")
   s?.match(/[^\s"]+|"([^"]*)"/gmi)?.forEach((token:string) => {
     if (tokens.length > 0 && tokens[tokens.length-1].indexOf('=') === tokens[tokens.length-1].length-1) tokens[tokens.length-1] = `${tokens[tokens.length-1]}${token}`
     else tokens.push(token)
   })
-  console.log(tokens)
   return Object.fromEntries(tokens.slice(1).map(token => {
     if (token.indexOf('=') > 0) {
       let [key, value] = token.split('=')
@@ -135,8 +133,9 @@ function isQid(s:string) { return /^Q\d+$/.test(s) }
 function isCoords(s:string) { return /^[+-]?\d+(.\d*|\d*),{1}[+-]?\d+(.\d*|\d*)$/.test(s) }
 
 function parseAttrsStr(s: string): any {
+  if (!s) return {}
   let tokens:string[] = []
-  s = s.replace(/“/,'"').replace(/”/,'"').replace(/’/,"'")
+  s = s.replace(/“/g,'"').replace(/”/g,'"').replace(/’/g,"'")
   s?.match(/[^\s"]+|"([^"]*)"/gmi)?.forEach(token => {
     if (tokens.length > 0 && tokens[tokens.length-1].indexOf('=') === tokens[tokens.length-1].length-1) tokens[tokens.length-1] = `${tokens[tokens.length-1]}${token}`
     else tokens.push(token)
@@ -197,10 +196,23 @@ export function md2html(markdown: string) {
   return marked.parse(markdown)
 }
 
+export function isGHP() {
+  return /\.github\.io$/.test(location.hostname)
+}
+
+async function getHeaderHtml() {
+  let resp = await fetch('/_includes/header.html')
+  if (resp.ok) return await resp.text()
+}
+
+async function getFooterHtml() {
+  let resp = await fetch('/_includes/footer.html')
+  if (resp.ok) return await resp.text()
+}
+
 export async function getHtml() {
   
-  console.log(window.location)
-  let isGhp = /\.github\.io$/.test(location.hostname) // GitHub Pages
+  // console.log(window.location)
   
   let path = location.pathname.split('/').filter(p => p)
   let branch = 'main'
@@ -208,29 +220,20 @@ export async function getHtml() {
       repo: string = '', 
       resp: Response
 
-  if (isGhp) {
-    owner = location.hostname.split('.')[0]
-    repo = path[0]
-    path = path.slice(1)
-    let base = document.createElement('base')
-    base.href = `/${repo}/`
-    document.head.append(base)
-  } else {
-    resp = await fetch('/config.yaml')
-    if (resp.ok) {
-      let rawText = await resp.text()
-      if (rawText.indexOf('<!DOCTYPE html>') < 0) {
-        let config = (await resp.text()).split('\n').map(l => l.split(':')).reduce((acc:any, [k, v]) => {
-          acc[k.trim()] = v.trim()
-          return acc
-        }, {})
-        owner = config.owner
-        repo = config.repo
-      }
+  resp = await fetch('/_config.yml')
+  if (resp.ok) {
+    let rawText = await resp.text()
+    if (rawText.indexOf('<!DOCTYPE html>') < 0) {
+      let config = rawText.split('\n').map(l => l.split(':')).reduce((acc:any, [k, v]) => {
+        acc[k.trim()] = v.trim()
+        return acc
+      }, {})
+      owner = config.owner
+      repo = config.repo
     }
   }
   if (path.length === 0) path = ['README.md']
-  console.log(`isGhp=${isGhp} owner=${owner} repo=${repo} branch=${branch} path=${path}`)
+  console.log(`owner=${owner} repo=${repo} branch=${branch} path=${path}`)
 
   let contentUrl = location.hostname === 'localhost'
     ? `${location.origin}/${path}`
@@ -259,12 +262,32 @@ export async function getHtml() {
     }
   }
   if (markdown) {
+    let headerHtml = await getHeaderHtml() || ''
+    let footerHtml = await getFooterHtml() || ''
     let el = new DOMParser().parseFromString(md2html(markdown), 'text/html').children[0].children[1]
-    // Fix relative links for GHP
-    el.querySelectorAll('a').forEach(link => {
-      let href = new URL(link.href)
-      if (isGhp && href.origin === location.origin && href.pathname.indexOf(`/${repo}/`) !== 0) link.href = `/${repo}${href.pathname}`
-    })
-    return el.innerHTML
+    let html = `
+      ${headerHtml}
+      <main class="page-content" aria-label="Content">${el.innerHTML}</main>
+      ${footerHtml}
+    `
+    return html
   }
+}
+
+export async function convertToEzElements() {
+  Array.from(document.body.querySelectorAll('img'))
+    .forEach((img: HTMLImageElement) => {
+      let ezImage = document.createElement('ez-image')
+      ezImage.setAttribute('src', img.src)
+      ezImage.setAttribute('alt', img.alt)
+      ezImage.setAttribute('left', '')
+      img.parentNode?.replaceChild(ezImage, img)
+    })
+
+  Array.from(document.body.querySelectorAll('p'))
+    .filter((p: HTMLParagraphElement) => /^\.ez-/.test(p.textContent || ''))
+    .forEach((p: HTMLParagraphElement) => {
+      let ezComponent = new DOMParser().parseFromString(ezComponentHtml(p), 'text/html').children[0].children[1].children[0]
+      p.parentNode?.replaceChild(ezComponent, p)
+    })
 }

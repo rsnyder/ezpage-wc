@@ -29,7 +29,7 @@ function defineCustomElements() {
 // @ts-ignore
 console.log(`ezpage-wc: version=${process.env.version}`)
 
-import { ezComponentHtml, getHtml, md2html, setMeta } from './utils'
+import { convertToEzElements, ezComponentHtml, getHtml, isGHP, md2html, setMeta } from './utils'
 export { getHtml, md2html, setMeta }
 let window = (globalThis as any).window
 window.md2html = md2html
@@ -38,18 +38,18 @@ window.setMeta = setMeta
 
 defineCustomElements()
 
-Array.from(document.body.querySelectorAll('img'))
-	.forEach((img: HTMLImageElement) => {
-		let ezImage = document.createElement('ez-image')
-		ezImage.setAttribute('src', img.src)
-		ezImage.setAttribute('alt', img.alt)
-		ezImage.setAttribute('left', '')
-		img.parentNode?.replaceChild(ezImage, img)
-	})
-
-Array.from(document.body.querySelectorAll('p'))
-	.filter((p: HTMLParagraphElement) => /^\.ez-/.test(p.textContent || ''))
-	.forEach((p: HTMLParagraphElement) => {
-		let ezComponent = new DOMParser().parseFromString(ezComponentHtml(p), 'text/html').children[0].children[1].children[0]
-		p.parentNode?.replaceChild(ezComponent, p)
-	})
+if (isGHP()) {
+  convertToEzElements()
+} else {
+  let observer = new MutationObserver(
+    (mutationsList:any) => {
+      for (let mutation of mutationsList) {
+        if (mutation.type === 'childList' && mutation.target.nodeName === 'BODY') {
+          convertToEzElements()
+          observer.disconnect()
+        }
+      }      
+    }
+  )
+  observer.observe(document.body, { childList: true, subtree: true })
+}
