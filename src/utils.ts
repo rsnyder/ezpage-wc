@@ -210,8 +210,8 @@ async function getFooterHtml() {
   if (resp.ok) return await resp.text()
 }
 
-let _config: any
-export async function getConfig() {
+let _config: any = (window as any).config
+export async function getConfig(): Promise<any> {
   if (_config) return _config
   _config = {}
   let resp = await fetch('_config.yml')
@@ -285,15 +285,13 @@ export async function getHtml() {
 
 export async function convertToEzElements() {
 
-  let isGhp = isGHP()
-  let config = (window as any).config
-  console.log(`isGhp=${isGhp} origin=${location.origin}`, config)
-  
-  document.querySelectorAll('a').forEach(link => {
-    let href = new URL(link.href)
-    console.log(href)
-    if (isGhp && href.origin === location.origin && href.pathname.indexOf(`/${config.repo}/`) !== 0) link.href = `/${config.repo}${href.pathname}`
-  })
+  if (isGHP()) {
+    let config = await getConfig()
+    document.querySelectorAll('a').forEach(link => {
+      let href = new URL(link.href)
+      if (href.origin === location.origin && href.pathname.indexOf(`/${config.repo}/`) !== 0) link.href = `/${config.repo}${href.pathname}`
+    })
+  }
 
   Array.from(document.body.querySelectorAll('img'))
     .forEach((img: HTMLImageElement) => {
