@@ -13,7 +13,7 @@ watch(shadowRoot, () => { new HSDropdown(shadowRoot.value).init() })
 watch(host, () => { getMenuItems() })
 
 const menuItems = ref<any[]>([])
-watch(menuItems, () => { console.log(toRaw(menuItems.value)) })
+// watch(menuItems, () => { console.log(toRaw(menuItems.value)) })
 
 const props = defineProps({
   logo: { type: String },
