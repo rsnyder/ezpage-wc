@@ -1,4 +1,4 @@
-import './tailwind.css'
+// import './tailwind.css'
 import { defineCustomElement } from 'vue'
 import ('preline')
 
@@ -14,7 +14,7 @@ import Trigger from './components/Trigger.ce.vue'
 
 // console.log(`juncture.web-components: version=${process.env.version}`)
 
-function init() {
+function defineCustomElements() {
 	customElements.define('ez-accordion', defineCustomElement(Accordion))
 	customElements.define('ez-collapse', defineCustomElement(Collapse))
 	customElements.define('ez-entity-infobox', defineCustomElement(EntityInfobox))
@@ -26,15 +26,30 @@ function init() {
 	customElements.define('ez-trigger', defineCustomElement(Trigger))
 };
 
-
 // @ts-ignore
 console.log(`ezpage-wc: version=${process.env.version}`)
 
-import { getHtml, md2html, setMeta } from './utils'
+import { ezComponentHtml, getHtml, md2html, setMeta } from './utils'
 export { getHtml, md2html, setMeta }
 let window = (globalThis as any).window
 window.md2html = md2html
 window.getHtml = getHtml
 window.setMeta = setMeta
 
-init()
+defineCustomElements()
+
+Array.from(document.body.querySelectorAll('img'))
+	.forEach((img: HTMLImageElement) => {
+		let ezImage = document.createElement('ez-image')
+		ezImage.setAttribute('src', img.src)
+		ezImage.setAttribute('alt', img.alt)
+		ezImage.setAttribute('left', '')
+		img.parentNode?.replaceChild(ezImage, img)
+	})
+
+Array.from(document.body.querySelectorAll('p'))
+	.filter((p: HTMLParagraphElement) => /^\.ez-/.test(p.textContent || ''))
+	.forEach((p: HTMLParagraphElement) => {
+		let ezComponent = new DOMParser().parseFromString(ezComponentHtml(p), 'text/html').children[0].children[1].children[0]
+		p.parentNode?.replaceChild(ezComponent, p)
+	})

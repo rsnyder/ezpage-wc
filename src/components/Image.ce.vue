@@ -58,11 +58,17 @@
   const src = ref()
   watch(src, () => { getTileSource(src.value) })
   function setSrc(_src: string) {
-    src.value = /^http/.test(_src) 
-      ? _src
-      : /^\w+:/.test(_src)
-        ? `https://iiif.juncture-digital.org/${_src.replace(/ /g, '_')}/manifest.json` 
-        : _src
+    if (/upload\.wikimedia\.org/.test(_src)) {
+      let parts = _src.split('/')
+      let file = parts[5] === 'thumb' ? parts[8] : parts[7]
+      src.value = `https://iiif.juncture-digital.org/wc:${file.replace(/ /g, '_')}/manifest.json` 
+    } else {
+      src.value = /^http/.test(_src) 
+        ? _src
+        : /^\w+:/.test(_src)
+          ? `https://iiif.juncture-digital.org/${_src.replace(/ /g, '_')}/manifest.json` 
+          : _src
+    }
   }
 
   const manifest = ref()
@@ -199,19 +205,20 @@
     setTimeout(() => setViewportCoords(), 500)
   }
 
-  const actionKeys = new Set(['zoomto'])
   function addInteractionHandlers() {
     let el = host.value.parentElement
-    while (el.parentElement && el.tagName !== 'BODY') el = el.parentElement;
-    (Array.from(el.querySelectorAll('ez-trigger')) as HTMLElement[]).forEach(mark => {
-      let match = Array.from(mark.attributes).find(attr => actionKeys.has(attr.name))
-      if (match) {
-        let imageEl = findImageEl(mark)
+    while (el.parentElement && el.tagName !== 'MAIN') el = el.parentElement;
+    console.log('addInteractionHandlers', el);
+    (Array.from(el.querySelectorAll('a')) as HTMLAnchorElement[]).forEach(anchorElem => {
+      let link = new URL(anchorElem.href)
+      let qargs = new URLSearchParams(link.search)
+      let region = qargs.get('zoom')
+      if (region) {
+        anchorElem.classList.add('zoom')
+        anchorElem.href = 'javascript:void(0)'
+        let imageEl = findImageEl(anchorElem)
         if (imageEl) {
-          mark.classList.add(match.name)
-          mark.addEventListener('click', () => {
-            if (match?.name === 'zoomto') zoomto(match.value)
-          })
+          anchorElem.addEventListener('click', () => { if (region) zoomto(region) })
         }
       }
     })
@@ -239,6 +246,7 @@
   function zoomto(arg: string) {
     arg = arg.replace(/^zoomto\|/i,'')
     const match = arg?.match(/^(?<region>(pct:|pixel:|px:)?[\d.]+,[\d.]+,[\d.]+,[\d.]+)?$/)
+    console.log('zoomto', arg, match)
     if (match) {
       let region = match?.groups?.region
       // console.log(`ez-image.zoomto: region=${region}`)

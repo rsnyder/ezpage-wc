@@ -45,6 +45,17 @@ marked.use({
   }
 })
 
+export function ezComponentHtml(el:HTMLElement) {
+  let lines = el.textContent?.trim().split('\n') || []
+  if (lines.length === 0) return ''
+  let headLine = lines[0]
+  let tag = headLine.match(/\.ez-[^\W]+/)?.[0].slice(1)
+  let attrs = asAttrs(parseHeadline(headLine))
+  let slot = lines.length > 1 ? marked.parse(lines.slice(1).map(l => l.replace(/^    /,'')).join('\n')) : ''
+  let elemHtml = `<${tag} ${attrs}>\n${slot}</${tag}>`
+  return elemHtml
+}
+
 function markedTextHandler(paraText: string) {
   let markedText = paraText.matchAll(/==(.+?)==\{([^\}]+)/g)
   let segments:string[] = []
