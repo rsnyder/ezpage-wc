@@ -290,8 +290,10 @@ export async function convertToEzElements() {
     console.log(`origin=${location.origin}`, config)
     document.querySelectorAll('a').forEach(link => {
       let href = new URL(link.href)
+      let before = link.href
       console.log(href)
       if (href.origin === location.origin && href.pathname.indexOf(`/${config.repo}/`) !== 0) link.href = `/${config.repo}${href.pathname}`
+      console.log(`${before} => ${link.href}`)
     })
   }
 
