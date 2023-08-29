@@ -284,14 +284,14 @@ export async function getHtml() {
 }
 
 export async function convertToEzElements() {
-
-  if (isGHP()) {
-    let config = await getConfig()
-    document.querySelectorAll('a').forEach(link => {
-      let href = new URL(link.href)
-      if (href.origin === location.origin && href.pathname.indexOf(`/${config.repo}/`) !== 0) link.href = `/${config.repo}${href.pathname}`
-    })
-  }
+  let isGhp = isGHP()
+  let config = await getConfig()
+  document.querySelectorAll('a').forEach(anchorElem => {
+    let link = new URL(anchorElem.href)
+    let qargs = new URLSearchParams(link.search)
+    if (qargs.get('zoom')) anchorElem.setAttribute('rel', 'nofollow')
+    if (isGhp && link.origin === location.origin && link.pathname.indexOf(`/${config.repo}/`) !== 0) anchorElem.href = `/${config.repo}${link.pathname}`
+  })
 
   Array.from(document.body.querySelectorAll('img'))
     .forEach((img: HTMLImageElement) => {
