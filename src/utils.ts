@@ -210,21 +210,21 @@ async function getFooterHtml() {
   if (resp.ok) return await resp.text()
 }
 
-let config: any
+let _config: any
 export async function getConfig() {
-  if (config) return config
-  config = {}
-  let resp = await fetch('/_config.yml')
+  if (_config) return _config
+  _config = {}
+  let resp = await fetch('_config.yml')
   if (resp.ok) {
     let rawText = await resp.text()
     if (rawText.indexOf('<!DOCTYPE html>') < 0) {
-      config = rawText.split('\n').map(l => l.split(':')).reduce((acc:any, [k, v]) => {
+      _config = rawText.split('\n').map(l => l.split(':')).reduce((acc:any, [k, v]) => {
         acc[k.trim()] = v.trim()
         return acc
       }, {})
     }
   }
-  return config
+  return _config
 }
 
 export async function getHtml() {
@@ -237,18 +237,10 @@ export async function getHtml() {
       repo: string = '', 
       resp: Response
 
-  resp = await fetch('/_config.yml')
-  if (resp.ok) {
-    let rawText = await resp.text()
-    if (rawText.indexOf('<!DOCTYPE html>') < 0) {
-      let config = rawText.split('\n').map(l => l.split(':')).reduce((acc:any, [k, v]) => {
-        acc[k.trim()] = v.trim()
-        return acc
-      }, {})
-      owner = config.owner
-      repo = config.repo
-    }
-  }
+  let config = await getConfig()
+  owner = config.owner
+  repo = config.repo
+
   if (path.length === 0) path = ['README.md']
   console.log(`owner=${owner} repo=${repo} branch=${branch} path=${path}`)
 
