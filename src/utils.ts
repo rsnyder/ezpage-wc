@@ -273,7 +273,7 @@ export async function getHtml() {
   if (markdown) {
     let headerHtml = await getHeaderHtml() || ''
     let footerHtml = await getFooterHtml() || ''
-    let el = new DOMParser().parseFromString(md2html(markdown), 'text/html').children[0].children[1]
+    let el:HTMLElement = new DOMParser().parseFromString(md2html(markdown), 'text/html').children[0].children[1] as HTMLElement
     let html = `
       ${headerHtml}
       <main class="page-content" aria-label="Content">${el.innerHTML}</main>
@@ -308,4 +308,53 @@ export async function convertToEzElements() {
       let ezComponent = new DOMParser().parseFromString(ezComponentHtml(p), 'text/html').children[0].children[1].children[0]
       p.parentNode?.replaceChild(ezComponent, p)
     })
+  
+  let main = document.querySelector('main')
+  let restructured = structureContent(main as HTMLElement)
+  main?.replaceWith(restructured)
+}
+
+function isNumeric(arg:any) { return !isNaN(arg) }
+
+export function structureContent(contentRoot:HTMLElement) {
+  let main = document.createElement('main')
+  let currentSection: HTMLElement = main
+  let segments:HTMLElement[] = []
+  let segment: HTMLElement | null
+
+  (Array.from(contentRoot.children) as HTMLElement[]).forEach((el:HTMLElement) => {
+    if (el.tagName[0] === 'H' && isNumeric(el.tagName.slice(1))) {
+      let heading = el as HTMLHeadingElement
+      let sectionLevel = parseInt(heading.tagName.slice(1))
+      if (segments) {
+        segments.forEach(segment => currentSection.innerHTML += segment.outerHTML)
+        segments = []
+        segment = null
+      }
+      currentSection = document.createElement('section')
+      currentSection.classList.add(`section-${sectionLevel}`)
+      if (heading.id) {
+        currentSection.id = heading.id
+        heading.removeAttribute('id')
+      }
+      if (!heading.innerHTML) heading.style.display = 'none'
+      currentSection.innerHTML += heading.outerHTML
+
+      let headings = [...main.querySelectorAll(`H${sectionLevel-1}`)]
+      let parent = sectionLevel === 1 || headings.length === 0 ? main : headings.pop()?.parentElement as HTMLElement
+      parent.appendChild(currentSection)
+    } else {
+      if (segment) {
+        segment.innerHTML += el.outerHTML
+      } else {
+        currentSection.innerHTML += el.outerHTML
+      }
+    }
+  })
+  if (segments) {
+    segments.forEach(segment => currentSection.innerHTML += segment.outerHTML)
+    segments = []
+  }
+  return main
+
 }
