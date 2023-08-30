@@ -29,7 +29,7 @@ function defineCustomElements() {
 // @ts-ignore
 console.log(`ezpage-wc: version=${process.env.version}`)
 
-import { convertToEzElements, ezComponentHtml, getHtml, isGHP, md2html, setMeta } from './utils'
+import { ezComponentHtml, getHtml, isGHP, md2html, setMeta, structureContent } from './utils'
 export { getHtml, md2html, setMeta }
 let window = (globalThis as any).window
 window.md2html = md2html
@@ -39,13 +39,13 @@ window.setMeta = setMeta
 defineCustomElements()
 
 if (isGHP()) {
-  convertToEzElements()
+  structureContent()
 } else {
   let observer = new MutationObserver(
     (mutationsList:any) => {
       for (let mutation of mutationsList) {
         if (mutation.type === 'childList' && mutation.target.nodeName === 'BODY') {
-          convertToEzElements()
+          structureContent()
           observer.disconnect()
         }
       }      

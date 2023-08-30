@@ -283,17 +283,17 @@ export async function getHtml() {
   }
 }
 
-export async function convertToEzElements() {
+export async function convertToEzElements(el:HTMLElement) {
   let isGhp = isGHP()
   let config = await getConfig()
-  document.querySelectorAll('a').forEach(anchorElem => {
+  el.querySelectorAll('a').forEach(anchorElem => {
     let link = new URL(anchorElem.href)
     let qargs = new URLSearchParams(link.search)
     if (qargs.get('zoom')) anchorElem.setAttribute('rel', 'nofollow')
     if (isGhp && link.origin === location.origin && link.pathname.indexOf(`/${config.repo}/`) !== 0) anchorElem.href = `/${config.repo}${link.pathname}`
   })
 
-  Array.from(document.body.querySelectorAll('img'))
+  Array.from(el.querySelectorAll('img'))
     .forEach((img: HTMLImageElement) => {
       let ezImage = document.createElement('ez-image')
       ezImage.setAttribute('src', img.src)
@@ -302,28 +302,24 @@ export async function convertToEzElements() {
       (img.parentNode as HTMLElement).replaceWith(ezImage)
     })
 
-  Array.from(document.body.querySelectorAll('p'))
+  Array.from(el.querySelectorAll('p'))
     .filter((p: HTMLParagraphElement) => /^\.ez-/.test(p.textContent || ''))
     .forEach((p: HTMLParagraphElement) => {
       let ezComponent = new DOMParser().parseFromString(ezComponentHtml(p), 'text/html').children[0].children[1].children[0]
       p.parentNode?.replaceChild(ezComponent, p)
     })
-  
-  let main = document.querySelector('main')
-  let restructured = structureContent(main as HTMLElement)
-  main?.replaceWith(restructured)
-  console.log('convertToEzElements')
 }
 
 function isNumeric(arg:any) { return !isNaN(arg) }
 
-export function structureContent(contentRoot:HTMLElement) {
-  let main = document.createElement('main')
-  let currentSection: HTMLElement = main
+export function structureContent() {
+  let main = document.querySelector('main')
+  let restructured = document.createElement('main')
+  let currentSection: HTMLElement = restructured
   let segments:HTMLElement[] = []
   let segment: HTMLElement | null
 
-  (Array.from(contentRoot.children) as HTMLElement[]).forEach((el:HTMLElement) => {
+  (Array.from(main?.children || []) as HTMLElement[]).forEach((el:HTMLElement) => {
     if (el.tagName[0] === 'H' && isNumeric(el.tagName.slice(1))) {
       let heading = el as HTMLHeadingElement
       let sectionLevel = parseInt(heading.tagName.slice(1))
@@ -341,9 +337,9 @@ export function structureContent(contentRoot:HTMLElement) {
       if (!heading.innerHTML) heading.style.display = 'none'
       currentSection.innerHTML += heading.outerHTML
 
-      let headings = [...main.querySelectorAll(`H${sectionLevel-1}`)]
-      let parent = sectionLevel === 1 || headings.length === 0 ? main : headings.pop()?.parentElement as HTMLElement
-      parent.appendChild(currentSection)
+      let headings = [...restructured.querySelectorAll(`H${sectionLevel-1}`)]
+      let parent = sectionLevel === 1 || headings.length === 0 ? restructured : headings.pop()?.parentElement as HTMLElement
+      parent?.appendChild(currentSection)
     } else {
       if (segment) {
         segment.innerHTML += el.outerHTML
@@ -356,6 +352,10 @@ export function structureContent(contentRoot:HTMLElement) {
     segments.forEach(segment => currentSection.innerHTML += segment.outerHTML)
     segments = []
   }
+
+  convertToEzElements(restructured)
+  main?.replaceWith(restructured)
+
   return main
 
 }
