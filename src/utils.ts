@@ -15,7 +15,7 @@ marked.use({
 
       // if (paraText.startsWith('<img')) return imgHandler(paraText)
 
-      let fnRefs = Array.from(paraText.matchAll(/(\[\^(\w+)\])[^:]/g))        // footnote references
+      let fnRefs = Array.from(paraText.matchAll(/(\[\^(\w+)\])([^:]|\s|$)/g))        // footnote references
       let markedText = Array.from(paraText.matchAll(/==(.+?)==\{([^\}]+)/g))  // marked text
       if (fnRefs.length || markedText.length) {
         paraText = footnoteReferencesHandler(paraText)
@@ -77,7 +77,7 @@ function markedTextHandler(paraText: string) {
 function footnoteReferencesHandler(paraText:string) { // TODO - Handle multiple references to the same footnote
   let segments:string[] = []
   let start = 0
-  Array.from(paraText.matchAll(/(\[\^(\w+)\])[^:]/g)).forEach(match => {
+  Array.from(paraText.matchAll(/(\[\^(\w+)\])([^:]|\s|$)/g)).forEach(match => {
     segments.push(paraText.slice(start, match.index))
     let [all, group, fnRef] = match
     segments.push(`<sup><a id="fnRef-${fnRef}" href="#fn-${fnRef}" style="font-weight:bold;padding:0 3px;">${fnRef}</a></sup>`)
@@ -271,7 +271,7 @@ export async function getHtml() {
     }
   }
   if (markdown) {
-    let headerHtml = await getHeaderHtml() || ''
+    let headerHtml = (await getHeaderHtml() || '').replace(/\{\{\s*site\.baseurl\s*\}\}/g, '/')
     let footerHtml = await getFooterHtml() || ''
     let el:HTMLElement = new DOMParser().parseFromString(md2html(markdown), 'text/html').children[0].children[1] as HTMLElement
     let html = `

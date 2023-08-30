@@ -206,10 +206,8 @@
   }
 
   function addInteractionHandlers() {
-    console.log('addInteractionHandlers')
     let el = host.value.parentElement
     while (el.parentElement && el.tagName !== 'MAIN') el = el.parentElement;
-    console.log(el);
     (Array.from(el.querySelectorAll('a')) as HTMLAnchorElement[]).forEach(anchorElem => {
       let link = new URL(anchorElem.href)
       let qargs = new URLSearchParams(link.search)
@@ -235,8 +233,8 @@
       }
     }
   
+    checkSibs(el)
     while (el.parentElement && el.tagName !== 'BODY') {
-      checkSibs(el)
       el = el.parentElement
       let imageEl = el.querySelector(':scope > ez-image, :scope > p > ez-image')
       if (imageEl) return imageEl === host.value ? imageEl : null
@@ -247,7 +245,6 @@
   function zoomto(arg: string) {
     arg = arg.replace(/^zoomto\|/i,'')
     const match = arg?.match(/^(?<region>(pct:|pixel:|px:)?[\d.]+,[\d.]+,[\d.]+,[\d.]+)?$/)
-    console.log('zoomto', arg, match)
     if (match) {
       let region = match?.groups?.region
       // console.log(`ez-image.zoomto: region=${region}`)
