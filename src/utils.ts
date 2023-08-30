@@ -80,7 +80,7 @@ function footnoteReferencesHandler(paraText:string) { // TODO - Handle multiple 
   Array.from(paraText.matchAll(/(\[\^(\w+)\])([^:]|\s|$)/g)).forEach(match => {
     segments.push(paraText.slice(start, match.index))
     let [all, group, fnRef] = match
-    segments.push(`<sup><a id="fnRef-${fnRef}" href="#fn-${fnRef}" style="font-weight:bold;padding:0 3px;">${fnRef}</a></sup>`)
+    segments.push(`<sup><a id="fnRef:${fnRef}" href="#fn:${fnRef}" style="font-weight:bold;padding:0 3px;">${fnRef}</a></sup>`)
     start = (match.index || 0) + group.length
   })
   segments.push(paraText.slice(start))
@@ -91,14 +91,20 @@ function footnotesHandler(paraText:string) { // TODO - Handle multiple reference
   let footnotes:string[] = []
   let start = 0
   let backLink:string = ''
+  let fnRef:string = ''
   Array.from(paraText.matchAll(/(\[\^(\w+)\]:)/g)).forEach(match => {
-    if (backLink) footnotes.push(paraText.slice(start, match.index).trim() + backLink)
-    let [all, _, fnRef] = match
-    backLink = `<a id="fn-${fnRef}" href="#fnRef-${fnRef}" title="Jump back to footnote ${fnRef} in the text" style="margin-left:6px;text-decoration:none;">↩</a>`
+    let [all, _, _fnRef] = match
+    if (backLink) {
+      let text = paraText.slice(start, match.index).trim()
+      footnotes.push(`<li id="fn:${fnRef}" role="doc-endnote"><p>${text}${backLink}</p></li>`)
+    }
+    backLink = `<a href="#fnRef:${_fnRef}" title="Jump back to footnote ${_fnRef} in the text" class="reversefootnote" role="doc-backlink" style="margin-left:6px;text-decoration:none;">↩</a>`
+    fnRef = _fnRef
     start = (match.index || 0) + all.length + 1
   })
-  footnotes.push(paraText.slice(start).trim() + backLink)
-  return `<li>${footnotes.join('</li><li>')}</li>`
+  let text = paraText.slice(start).trim()
+  footnotes.push(`<li id="fn:${fnRef}" role="doc-endnote"><p>${text}${backLink}</p></li>`)
+  return footnotes.join('')
 }
 
 function imgHandler(paraText:string) {
