@@ -12,8 +12,6 @@ import Meta from './components/Meta.ce.vue'
 import Modal from './components/Modal.ce.vue'
 import Trigger from './components/Trigger.ce.vue'
 
-// console.log(`juncture.web-components: version=${process.env.version}`)
-
 function defineCustomElements() {
 	customElements.define('ez-accordion', defineCustomElement(Accordion))
 	customElements.define('ez-collapse', defineCustomElement(Collapse))
@@ -29,27 +27,11 @@ function defineCustomElements() {
 // @ts-ignore
 console.log(`ezpage-wc: version=${process.env.version}`)
 
-import { ezComponentHtml, getHtml, isGHP, md2html, setMeta, structureContent } from './utils'
-export { getHtml, md2html, setMeta }
+import { md2html, structureContent } from './utils'
+export { md2html }
 let window = (globalThis as any).window
 window.md2html = md2html
-window.getHtml = getHtml
-window.setMeta = setMeta
 
 defineCustomElements()
 
-if (isGHP()) {
-  structureContent()
-} else {
-  let observer = new MutationObserver(
-    (mutationsList:any) => {
-      for (let mutation of mutationsList) {
-        if (mutation.type === 'childList' && mutation.target.nodeName === 'BODY') {
-          structureContent()
-          observer.disconnect()
-        }
-      }      
-    }
-  )
-  observer.observe(document.body, { childList: true, subtree: true })
-}
+structureContent()
