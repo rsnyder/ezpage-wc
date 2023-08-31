@@ -354,7 +354,7 @@ export function structureContent() {
       sectionParam = heading.nextElementSibling as HTMLElement
       let param = sectionParam?.querySelector('param')
       if (param) {
-        param.classList.forEach(c => currentSection.classList.add(c))
+        param.dataset.class?.split(' ').forEach(c => currentSection.classList.add(c)) 
       }
       heading.className = ''
       if (heading.id) {
