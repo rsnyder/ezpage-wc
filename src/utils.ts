@@ -352,9 +352,8 @@ export function structureContent() {
       currentSection.classList.add(`section-${sectionLevel}`)
       Array.from(heading.classList).forEach(c => currentSection.classList.add(c))
       sectionParam = heading.nextElementSibling as HTMLElement
-      let param = sectionParam?.querySelector('param')
-      if (param) {
-        param.dataset.class?.split(' ').forEach(c => currentSection.classList.add(c)) 
+      if (sectionParam) {
+        sectionParam.classList.forEach(c => currentSection.classList.add(c))
       }
       heading.className = ''
       if (heading.id) {
