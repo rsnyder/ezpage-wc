@@ -371,7 +371,7 @@ export function structureContent() {
       currentSection.setAttribute('data-id', computeDataId(currentSection))
 
     } else {
-      if (el !== sectionParam)
+      // if (el !== sectionParam)
       currentSection.innerHTML += el.outerHTML
     }
   })
