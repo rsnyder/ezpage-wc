@@ -386,12 +386,10 @@ export function structureContent() {
       card.classList.add('card')
       let heading = card.querySelector('h1, h2, h3, h4, h5, h6') as HTMLHeadingElement
       if (heading) heading.remove()
-      // Array.from(card.children).forEach(child => {
-        let img = card.querySelector('p > img') as HTMLImageElement
-        if (img) img.parentElement?.replaceWith(img)
-        let link = card.querySelector('p > a') as HTMLImageElement
-        if (link) link.parentElement?.replaceWith(link)
-      //})
+      let img = card.querySelector('p > img') as HTMLImageElement
+      if (img) img.parentElement?.replaceWith(img)
+      let link = card.querySelector('p > a') as HTMLImageElement
+      if (link) link.parentElement?.replaceWith(link)
     })
     section.appendChild(wrapper)
     }
