@@ -381,19 +381,17 @@ export function structureContent() {
     section.classList.remove('cards')
     let wrapper = document.createElement('section')
     wrapper.className = 'cards wrapper'
-    Array.from(section.children).slice(1).forEach(c => {
-      wrapper.appendChild(c)
-      c.classList.add('card')
-      Array.from(c.children).forEach(child => {
-        let heading = child.querySelector('h1, h2, h3, h4, h5, h6') as HTMLHeadingElement
-        console.log(heading)
-        if (heading) heading.remove()
-        let img = child.querySelector('p > img') as HTMLImageElement
+    Array.from(section.children).slice(1).forEach(card => {
+      wrapper.appendChild(card)
+      card.classList.add('card')
+      let heading = card.querySelector('h1, h2, h3, h4, h5, h6') as HTMLHeadingElement
+      if (heading) heading.remove()
+      // Array.from(card.children).forEach(child => {
+        let img = card.querySelector('p > img') as HTMLImageElement
         if (img) img.parentElement?.replaceWith(img)
-        let link = child.querySelector('p > a') as HTMLImageElement
+        let link = card.querySelector('p > a') as HTMLImageElement
         if (link) link.parentElement?.replaceWith(link)
-      })
-
+      //})
     })
     section.appendChild(wrapper)
     }
