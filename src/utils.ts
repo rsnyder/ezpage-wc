@@ -386,6 +386,7 @@ export function structureContent() {
       c.classList.add('card')
       Array.from(c.children).forEach(child => {
         let heading = child.querySelector('h1, h2, h3, h4, h5, h6') as HTMLHeadingElement
+        console.log(heading)
         if (heading) heading.remove()
         let img = child.querySelector('p > img') as HTMLImageElement
         if (img) img.parentElement?.replaceWith(img)
