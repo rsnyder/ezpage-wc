@@ -301,6 +301,7 @@ export async function convertToEzElements(el:HTMLElement) {
 
   Array.from(el.querySelectorAll('img'))
     .forEach((img: HTMLImageElement) => {
+      if (img.parentElement?.classList.contains('card')) return
       let ezImage = document.createElement('ez-image')
       ezImage.setAttribute('src', img.src)
       ezImage.setAttribute('alt', img.alt)
@@ -318,46 +319,75 @@ export async function convertToEzElements(el:HTMLElement) {
 
 function isNumeric(arg:any) { return !isNaN(arg) }
 
+function computeDataId(el:HTMLElement) {
+  let dataId = []
+  // if (!el.parentElement) dataId.push(1)
+  while (el.parentElement) {
+    let siblings = Array.from(el.parentElement.children).filter(c => c.tagName === el.tagName)
+    dataId.push(siblings.indexOf(el) + 1)
+    el = el.parentElement
+  }
+  return dataId.reverse().join('.')
+}
+
 export function structureContent() {
   let main = document.querySelector('main')
   let restructured = document.createElement('main')
-  let currentSection: HTMLElement = restructured
-  let segments:HTMLElement[] = []
-  let segment: HTMLElement | null
+  let currentSection: HTMLElement = restructured;
 
   (Array.from(main?.children || []) as HTMLElement[]).forEach((el:HTMLElement) => {
     if (el.tagName[0] === 'H' && isNumeric(el.tagName.slice(1))) {
       let heading = el as HTMLHeadingElement
       let sectionLevel = parseInt(heading.tagName.slice(1))
-      if (segments) {
-        segments.forEach(segment => currentSection.innerHTML += segment.outerHTML)
-        segments = []
-        segment = null
+      if (currentSection) {
+        (Array.from(currentSection.children) as HTMLElement[])
+          .filter(child => !/^H\d/.test(child.tagName))
+          .forEach((child:HTMLElement, idx:number) => { 
+            child.setAttribute('data-id', `segment-${currentSection.getAttribute('data-id')}.${idx+1}`)
+          })
       }
       currentSection = document.createElement('section')
       currentSection.classList.add(`section-${sectionLevel}`)
+      Array.from(heading.classList).forEach(c => currentSection.classList.add(c))
+      heading.className = ''
       if (heading.id) {
         currentSection.id = heading.id
         heading.removeAttribute('id')
       }
-      if (!heading.innerHTML) heading.style.display = 'none'
+
       currentSection.innerHTML += heading.outerHTML
+      if (!heading.innerHTML.trim()) currentSection.firstChild?.remove()
 
       let headings = [...restructured.querySelectorAll(`H${sectionLevel-1}`)]
       let parent = sectionLevel === 1 || headings.length === 0 ? restructured : headings.pop()?.parentElement as HTMLElement
       parent?.appendChild(currentSection)
+      currentSection.setAttribute('data-id', computeDataId(currentSection))
+
     } else {
-      if (segment) {
-        segment.innerHTML += el.outerHTML
-      } else {
-        currentSection.innerHTML += el.outerHTML
-      }
+      currentSection.innerHTML += el.outerHTML
     }
   })
-  if (segments) {
-    segments.forEach(segment => currentSection.innerHTML += segment.outerHTML)
-    segments = []
-  }
+
+  restructured.querySelectorAll('section').forEach((section:HTMLElement) => {
+  if (section.classList.contains('cards') && !section.classList.contains('wrapper')) {
+    section.classList.remove('cards')
+    let wrapper = document.createElement('section')
+    wrapper.className = 'cards wrapper'
+    Array.from(section.children).slice(1).forEach(c => {
+      wrapper.appendChild(c)
+      c.classList.add('card')
+      Array.from(c.children).forEach(child => {
+        let img = child.querySelector('p > img') as HTMLImageElement
+        if (img) img.parentElement?.replaceWith(img)
+        let link = child.querySelector('p > a') as HTMLImageElement
+        if (link) link.parentElement?.replaceWith(link)
+      })
+
+    })
+    section.appendChild(wrapper)
+    }
+  })
+
 
   convertToEzElements(restructured)
   main?.replaceWith(restructured)
