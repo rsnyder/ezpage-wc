@@ -351,7 +351,9 @@ export function structureContent() {
       currentSection = document.createElement('section')
       currentSection.classList.add(`section-${sectionLevel}`)
       Array.from(heading.classList).forEach(c => currentSection.classList.add(c))
-      sectionParam = heading.nextElementSibling as HTMLElement
+      sectionParam = heading.nextElementSibling?.tagName === 'PARAM'
+        ? heading.nextElementSibling as HTMLElement
+        : null
       if (sectionParam) {
         sectionParam.classList.forEach(c => currentSection.classList.add(c))
       }
