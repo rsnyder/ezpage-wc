@@ -370,8 +370,7 @@ export function structureContent() {
       currentSection.setAttribute('data-id', computeDataId(currentSection))
 
     } else {
-      // if (el !== sectionParam)
-      currentSection.innerHTML += el.outerHTML
+      if (el !== sectionParam) currentSection.innerHTML += el.outerHTML
     }
   })
 
@@ -384,6 +383,8 @@ export function structureContent() {
       wrapper.appendChild(c)
       c.classList.add('card')
       Array.from(c.children).forEach(child => {
+        let heading = child.querySelector('h1, h2, h3, h4, h5, h6') as HTMLHeadingElement
+        if (heading) heading.remove()
         let img = child.querySelector('p > img') as HTMLImageElement
         if (img) img.parentElement?.replaceWith(img)
         let link = child.querySelector('p > a') as HTMLImageElement
