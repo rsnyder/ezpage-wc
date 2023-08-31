@@ -334,6 +334,7 @@ export function structureContent() {
   let main = document.querySelector('main')
   let restructured = document.createElement('main')
   let currentSection: HTMLElement = restructured;
+  let sectionParam: HTMLElement | null
 
   (Array.from(main?.children || []) as HTMLElement[]).forEach((el:HTMLElement) => {
     if (el.tagName[0] === 'H' && isNumeric(el.tagName.slice(1))) {
@@ -346,9 +347,15 @@ export function structureContent() {
             child.setAttribute('data-id', `segment-${currentSection.getAttribute('data-id')}.${idx+1}`)
           })
       }
+
       currentSection = document.createElement('section')
       currentSection.classList.add(`section-${sectionLevel}`)
       Array.from(heading.classList).forEach(c => currentSection.classList.add(c))
+      sectionParam = heading.nextElementSibling as HTMLElement
+      let param = sectionParam?.querySelector('param')
+      if (param) {
+        param.classList.forEach(c => currentSection.classList.add(c))
+      }
       heading.className = ''
       if (heading.id) {
         currentSection.id = heading.id
@@ -364,6 +371,7 @@ export function structureContent() {
       currentSection.setAttribute('data-id', computeDataId(currentSection))
 
     } else {
+      if (el !== sectionParam)
       currentSection.innerHTML += el.outerHTML
     }
   })
