@@ -97,7 +97,7 @@ if (isJunctureV1) {
     new window.Vue({
       el: '#vue',
       components: {
-        'juncture-v1': window.httpVueLoader('/juncture-components/JunctureV1.vue')
+        'juncture-v1': window.httpVueLoader('/ezpage-dev/juncture-components/JunctureV1.vue')
       },
       data: () => ({ html })
     })
