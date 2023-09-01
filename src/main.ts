@@ -46,7 +46,14 @@ if (isJunctureV1) {
   
   let main = document.querySelector('main')
   if (main) {
+
     let tmp = new DOMParser().parseFromString(main.innerHTML, 'text/html').children[0].children[1]
+
+    let img = tmp.querySelector('a img') as HTMLImageElement
+    if (img?.src.indexOf('ve-button') > -1) img.parentElement?.parentElement?.remove()
+
+    // Array.from(tmp.querySelectorAll('p > param')).forEach(param => param.parentElement?.after(param))
+
     Array.from(tmp.querySelectorAll('[data-id]'))
       .forEach(seg => {
         let id = seg.getAttribute('data-id') || ''
@@ -65,6 +72,11 @@ if (isJunctureV1) {
         }
         seg.replaceWith(wrapper)
       })
+    
+    Array.from(tmp.querySelectorAll('div'))
+      .filter(div => div.innerHTML.trim() === '')
+      .forEach(div => div.remove())
+    
     let html = tmp.innerHTML
 
     while (document.body.firstChild) document.body.removeChild(document.body.firstChild);
