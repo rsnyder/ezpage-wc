@@ -343,8 +343,12 @@ export function structureContent() {
       if (currentSection) {
         (Array.from(currentSection.children) as HTMLElement[])
           .filter(child => !/^H\d/.test(child.tagName))
+          .filter(child => !/PARAM/.test(child.tagName))
           .forEach((child:HTMLElement, idx:number) => { 
-            child.setAttribute('data-id', `segment-${currentSection.getAttribute('data-id')}.${idx+1}`)
+            let segId = `${currentSection.getAttribute('data-id') || 1}.${idx+1}`
+            child.setAttribute('data-id', segId)
+            child.id = segId
+            child.className = 'segment'
           })
       }
 
@@ -394,7 +398,6 @@ export function structureContent() {
     section.appendChild(wrapper)
     }
   })
-
 
   convertToEzElements(restructured)
   main?.replaceWith(restructured)
