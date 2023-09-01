@@ -31,7 +31,6 @@ window.md2html = md2html
 
 // @ts-ignore
 console.log(`ezpage-wc: version=${process.env.version}`)
-console.log(window.config)
 
 defineCustomElements()
 
@@ -41,7 +40,7 @@ let isJunctureV1 = Array.from(document.querySelectorAll('param'))
 	.find(param =>
     Array.from(param.attributes).find(attr => attr.name.indexOf('ve-') === 0)
   ) !== undefined
-console.log(`isJunctureV1=${isJunctureV1}`)
+// console.log(`isJunctureV1=${isJunctureV1}`)
 
 if (isJunctureV1) {
   
