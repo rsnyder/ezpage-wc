@@ -24,13 +24,14 @@ function defineCustomElements() {
 	customElements.define('ez-trigger', defineCustomElement(Trigger))
 };
 
-// @ts-ignore
-console.log(`ezpage-wc: version=${process.env.version}`)
-
 import { md2html, structureContent } from './utils'
 export { md2html }
 let window = (globalThis as any).window
 window.md2html = md2html
+
+// @ts-ignore
+console.log(`ezpage-wc: version=${process.env.version}`)
+console.log(window.config)
 
 defineCustomElements()
 
@@ -97,7 +98,7 @@ if (isJunctureV1) {
     new window.Vue({
       el: '#vue',
       components: {
-        'juncture-v1': window.httpVueLoader('/ezpage-dev/juncture-components/JunctureV1.vue')
+        'juncture-v1': window.httpVueLoader(`${window.config.baseurl}juncture-components/JunctureV1.vue`)
       },
       data: () => ({ html })
     })

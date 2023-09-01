@@ -235,7 +235,7 @@ export async function getConfig(): Promise<any> {
 
 export async function getHtml() {
   
-  // console.log(window.location)
+  console.log(window.location)
   
   let path = location.pathname.split('/').filter(p => p)
   let branch = 'main'
