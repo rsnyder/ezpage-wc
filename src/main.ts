@@ -112,7 +112,7 @@ if (isJunctureV1) {
     new window.Vue({
       el: '#vue',
       components: {
-        'juncture-v1': window.httpVueLoader(`${window.config.baseurl}juncture-components/JunctureV1.vue`)
+        'juncture-v1': window.httpVueLoader(`${window.config.baseurl}/juncture-components/JunctureV1.vue`)
       },
       data: () => ({ html })
     })
