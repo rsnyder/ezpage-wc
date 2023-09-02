@@ -76,6 +76,7 @@ if (isJunctureV1) {
     Array.from(tmp.querySelectorAll('div'))
       .filter(div => {
         let content = div.innerHTML.trim()
+        console.log(`content=${content}`)
         return content === '' || content === '#'
       })
       .forEach(div => div.remove())
