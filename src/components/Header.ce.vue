@@ -9,15 +9,33 @@ const shadowRoot = computed(() => root?.value?.parentNode as HTMLElement)
 const header = computed(() => shadowRoot.value?.querySelector('header'))
 watch(header, (header) => { if (header) header.style.backgroundColor = props.color})
 
-watch(host, () => {
-  menuItems.value = Array.from(host.value.querySelectorAll('li'))
-    .map((li: any) => {
-      const a = li.querySelector('a')
-      return { label: a.innerText, href: a.href }
-    })
-})
+watch(host, () => { getMenuItems() })
 
+function getMenuItems() {
+  
+  let slot = host.value.parentElement.querySelector('ez-header')
+
+  function parseSlot() {
+    menuItems.value = Array.from(slot.querySelectorAll('li'))
+      .map((li: any) => {
+        const a = li.querySelector('a')
+        return { label: a.innerText, href: a.href }
+      })
+    }
+    
+  parseSlot()
+  new MutationObserver(
+    (mutationsList:any) => {
+      for (let mutation of mutationsList) { if (mutation.type === 'childList') parseSlot() }      
+    }
+  ).observe(slot, { childList: true, subtree: true })
+}
+
+const title = computed(() => props.title)
 const menuItems = ref<any[]>([])
+watch(menuItems, (items) => {
+  console.log('menuItems', items)
+})
 
 const props = defineProps({
   title: { type: String },
